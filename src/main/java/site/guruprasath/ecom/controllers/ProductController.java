@@ -2,6 +2,7 @@ package site.guruprasath.ecom.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import site.guruprasath.ecom.models.Product;
+import site.guruprasath.ecom.services.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,15 @@ import java.util.List;
 @RequestMapping("/api")
 public class ProductController {
 
-    @PostMapping("/products")
-    public void createProduct() {
+    private ProductService productService;
 
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping("/products/{id}")
     public Product getProductDetails(@PathVariable("id") int id) {
-        return new Product();
+        return productService.getSingleProduct(id);
     }
 
     @GetMapping("/products")
@@ -25,6 +27,12 @@ public class ProductController {
         return new ArrayList<>();
     }
 
+    @PostMapping("/products")
+    public void createProduct() {
+
+    }
+
+    @PutMapping("/products")
     public void updateProduct(int id) {
 
     }
