@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EcomApplication {
 
 	public static void main(String[] args) {
+
+		// Spring Boot App Main entry file where create Application Context
 		SpringApplication.run(EcomApplication.class, args);
 	}
 
