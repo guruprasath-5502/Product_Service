@@ -1,11 +1,13 @@
 package site.guruprasath.ecom.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.guruprasath.ecom.DTOs.RequestBodyProductDTO;
+import site.guruprasath.ecom.models.Category;
 import site.guruprasath.ecom.models.Product;
 import site.guruprasath.ecom.services.ProductService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -13,7 +15,7 @@ import java.util.List;
 public class ProductController {
 
     // This controller is dependent on ProductService instance, So it will be injected by spring boot
-    private ProductService productService;
+    private final ProductService productService;
 
     // Constructor Injection - No need to mention Autowired annotation
     public ProductController(ProductService productService) {
@@ -21,23 +23,33 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public Product getProductDetails(@PathVariable("id") Long id) {
-        return productService.getSingleProduct(id);
+    public ResponseEntity<Product> getProductDetails(@PathVariable("id") Long id) { // Response Entity contains not only data, but all other metadata like headers, statusCode etc..
+        Product product = productService.getSingleProduct(id);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @GetMapping("/products")
-    public List<Product> getAllProducts() {
-        return new ArrayList<>();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @PostMapping("/products")
-    public Product createProduct(@RequestBody RequestBodyProductDTO request) {
-        return productService.createProduct(
+    public ResponseEntity<Product> createProduct(@RequestBody RequestBodyProductDTO request) {
+        Product product = productService.createProduct(
                 request.getTitle(),
                 request.getDescription(),
                 request.getPrice(),
                 request.getImageURL(),
                 request.getCategory());
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+    @GetMapping("/products/categories")
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = productService.getAllCategories();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @PutMapping("/products")
