@@ -12,4 +12,7 @@ public interface ProductService {
     List<Product> getAllProducts() throws HttpServerErrorException;
     List<Category> getAllCategories();
     Product createProduct(String title, String description, double price, String imageURL, String category) throws HttpServerErrorException, NullPointerException;
+    List<Product> getProductsByCategory(String category);
+    String updateProduct(Long id, String title, String description, double price, String imageURL, String category);
+    String deleteProduct(Long id);
 }

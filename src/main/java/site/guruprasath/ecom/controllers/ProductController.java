@@ -52,8 +52,28 @@ public class ProductController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PutMapping("/products")
-    public void updateProduct(int id) {
+    @GetMapping("/products/category/{category}")
+    public ResponseEntity<List<Product>> getProductsInSpecificCategory(@PathVariable("category") String category){
+        List<Product> products = productService.getProductsByCategory(category);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @PutMapping("/products/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable("id") Long id, @RequestBody RequestBodyProductDTO request) {
+        String response = productService.updateProduct(
+                id,
+                request.getTitle(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getImageURL(),
+                request.getCategory());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") Long id) {
+        String response = productService.deleteProduct(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 }

@@ -45,6 +45,42 @@ public class FakeStoreProductService implements ProductService{
     }
 
     @Override
+    public List<Product> getProductsByCategory(String category) {
+        List<Category> categories = getAllCategories();
+
+        boolean found = false;
+
+        for(Category c : categories) {
+            if(c.getTitle().equalsIgnoreCase(category)) {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            throw new IllegalArgumentException("Category not found");
+        }
+
+        List<Product> products = new ArrayList<>();
+
+        ResponseEntity<FakeStoreProductDTO[]> response = restTemplate.getForEntity("https://fakestoreapi.com/products/category/" + category, FakeStoreProductDTO[].class);
+
+        if(response.getStatusCode() != HttpStatusCode.valueOf(200)) {
+            throw new HttpServerErrorException(response.getStatusCode(), "Something went wrong!");
+        }
+
+        FakeStoreProductDTO[] fakeStoreProductDTOList = response.getBody();
+
+        if(fakeStoreProductDTOList != null) {
+            for(FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOList) {
+                products.add(fakeStoreProductDTO.toProduct());
+            }
+        }
+
+        return products;
+    }
+
+    @Override
     public List<Product> getAllProducts() throws HttpServerErrorException {
         List<Product> products = new ArrayList<>();
 
@@ -106,5 +142,26 @@ public class FakeStoreProductService implements ProductService{
         }
 
         return response.getBody().toProduct();
+    }
+
+    @Override
+    public String updateProduct(Long id, String title, String description, double price, String imageURL, String category) {
+        FakeStoreProductDTO fakeStoreProduct = new FakeStoreProductDTO();
+        fakeStoreProduct.setTitle(title);
+        fakeStoreProduct.setDescription(description);
+        fakeStoreProduct.setPrice(price);
+        fakeStoreProduct.setImage(imageURL);
+        fakeStoreProduct.setCategory(category);
+
+        restTemplate.put("https://fakestoreapi.com/products/" + id, fakeStoreProduct);
+
+        return "Product Updated";
+
+    }
+
+    @Override
+    public String deleteProduct(Long id) {
+        restTemplate.delete("https://fakestoreapi.com/products/" + id);
+        return "Product deleted";
     }
 }
